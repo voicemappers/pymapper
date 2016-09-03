@@ -1,0 +1,2 @@
+#!/bin/bash
+play rec$@ 2> /dev/null >/dev/null | cat out$@
