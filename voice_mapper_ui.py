@@ -1,17 +1,23 @@
 #!/usr/bin/python
 
 import os
+import pickle
 from tkinter import *
 import tkinter.messagebox
 from tkinter.filedialog import askopenfilename
+
+import train
+import dtw_util
+
+PKL_FILE = "trained_ui.pkl"
+
+category_dict_rosa = {}
+category_dict_sphinx = {}
 
 name = []
 
 data_cv = []
 data_cboxes = []
-
-train_label = []
-category_dict = {}
 
 test_label = []
 global_test_input = []
@@ -38,6 +44,20 @@ label3.grid(row=0, column=5, pady=10)
 frame3 = Frame(window, width=180, height=340, bg='white', bd=3, relief=RIDGE)
 frame3.grid(row=1, column=5, padx=35, pady=20)
 frame3.pack_propagate(False)
+
+
+def read_trained_pickle():
+    # trained_files is label filename pairs
+    if not os.path.isfile(PKL_FILE):
+        return {}
+    with open(PKL_FILE, "rb") as f:
+        return pickle.load(f)
+
+
+def write_trained_pickle(trained_dict):
+    # trained_files is label filename pairs
+    with open(PKL_FILE, "wb") as f:
+        pickle.dump(trained_dict, f)
 
 
 def fileDialog():
@@ -73,6 +93,12 @@ def selected():
     return selected_list
 
 
+def init_trained_display(trained_dict):
+    for key in trained_dict:
+        train_label = Label(frame1, text=key)
+        train_label.pack(padx=10, pady=10)
+
+
 def train_list():
     selected_to_train = []
     selected_to_train_num = selected()
@@ -97,7 +123,10 @@ def train_list():
         def update_train_list():
 
             category_entry_value = category_entry.get()
-            category_dict[category_entry_value] = selected_to_train
+            # train and keep a single file representing the centroid
+            category_dict_rosa[category_entry_value] = train.train(selected_to_train)[0]
+            # GAUTHAM: gautrain.train(selected_to_train)
+            write_trained_pickle(category_dict_rosa)
             train_label = Label(frame1, text=category_entry_value)
             train_label.pack(padx=10, pady=10)
             category_window.destroy()
@@ -107,7 +136,7 @@ def train_list():
                 data_cboxes[i].config(state=DISABLED)
 
             print("\nUpdated Category List : \n\n")
-            print(category_dict)
+            print(category_dict_rosa)
 
         category_ok_button = Button(category_window, text='OK', command=update_train_list)
         category_ok_button.grid(row=1, column=1, padx=10, pady=10)
@@ -141,12 +170,17 @@ def test_list():
         tkinter.messagebox.showerror("Error", "Please select the files to test or browse for files.")
 
 
-def quickTest():
+def quick_test():
     pass
 
 
-def barGraph():
-    pass
+def bar_graph():
+    dists_rosa = {label: dtw_util.get_distance(global_test_input[0], centroid)
+                  for label, centroid in category_dict_rosa.items()}
+    # GAUTHAM: Read your files here as {label:filename}
+    # dists_sphinx = {label: gautrain.get_dist(global_test_input[0], centroid)
+    #                 for label, centroid in gautrain.read_label_file_dict().items()}
+
 
 
 def spectrogram():
@@ -161,11 +195,11 @@ def classify():
     check_var1 = IntVar()
     check_var2 = IntVar()
 
-    c1 = Checkbutton(classify_window, text="Librosa", variable=check_var1, \
-                     onvalue=1, offvalue=0, height=2, \
+    c1 = Checkbutton(classify_window, text="Librosa", variable=check_var1,
+                     onvalue=1, offvalue=0, height=2,
                      width=10)
-    c2 = Checkbutton(classify_window, text="Sphinx", variable=check_var2, \
-                     onvalue=1, offvalue=0, height=2, \
+    c2 = Checkbutton(classify_window, text="Sphinx", variable=check_var2,
+                     onvalue=1, offvalue=0, height=2,
                      width=10)
     c1.grid(row=0, column=0, padx=20, pady=10)
     c2.grid(row=1, column=0, padx=20, pady=10)
@@ -189,14 +223,14 @@ def classify():
             test_label = Label(frame1, text=filename)
             test_label.pack(padx=10, pady=10)
 
-        graph_button = Button(result_window, text='Bar Graph for selected file', bd=3, padx=35, command=barGraph)
+        graph_button = Button(result_window, text='Bar Graph for selected file', bd=3, padx=35, command=bar_graph)
         graph_button.grid(row=1, column=2)
 
         specto_button = Button(result_window, text='Spectogram for selected file(s)', bd=3, padx=35,
                                command=spectrogram)
         specto_button.grid(row=2, column=2)
 
-        test_button = Button(result_window, text='Quick Test', bd=3, pady=15, command=quickTest)
+        test_button = Button(result_window, text='Quick Test', bd=3, pady=15, command=quick_test)
         test_button.grid(row=2, column=1)
 
     ok_button = Button(classify_window, text="OK", command=result)
@@ -205,6 +239,9 @@ def classify():
     quit_button = Button(classify_window, text="Cancel", command=lambda: classify_window.destroy())
     quit_button.grid(row=2, column=1, padx=20, pady=20)
 
+
+category_dict_rosa = read_trained_pickle()
+init_trained_display(category_dict_rosa)
 
 train_button = Button(window, text='<', bd=3, padx=20, pady=20, command=train_list)
 train_button.grid(row=1, column=2)
