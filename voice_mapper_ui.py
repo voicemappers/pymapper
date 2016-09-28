@@ -41,170 +41,169 @@ frame3.pack_propagate(False)
 
 
 def fileDialog():
-	'''
-		Opens MP3, M4A and WAV files
-	'''
+    '''
+        Opens MP3, M4A and WAV files
+    '''
 
-	n = list(askopenfilename(multiple=True, parent=window, filetypes=[('audio files', '*.mp3'), 
-					('audio files', '*.m4a'), ('audio files', '*.wav')]))
-	n_len = len(n)
+    n = list(askopenfilename(multiple=True, parent=window, filetypes=[('audio files', '*.mp3'),
+                                                                      ('audio files', '*.m4a'),
+                                                                      ('audio files', '*.wav')]))
+    n_len = len(n)
 
-	name.extend(n)
+    name.extend(n)
 
-	for i in range(n_len) :
-
-		cv = IntVar()
-		filename = os.path.split(n[i])[1] 
-		c = Checkbutton(frame2, text=filename, variable=cv, \
-                 onvalue=1, offvalue=0, height=2, \
-                 width=20)
-		data_cboxes.append(c)
-		data_cv.append(cv)
-		c.pack()
-
-
-def selected() :
-
-	selected_list = []
-	name_len = len(name)
-	for i in range(name_len):
-		if data_cv[i].get() == 1 :
-			selected_list.append(i)
-
-	return selected_list
-
-def train_list() :
-	
-	selected_to_train = []
-	selected_to_train_num = selected()
-
-	for i in selected_to_train_num :
-		selected_to_train.append(name[i])
-
-	s_len = len(selected_to_train)
-
-	if not (s_len == 0) :
-
-		category_window = Toplevel(master=window)
-		category_window.title("Create Category")
-		category_window.resizable(width=False, height=False)
+    for i in range(n_len):
+        cv = IntVar()
+        filename = os.path.split(n[i])[1]
+        c = Checkbutton(frame2, text=filename, variable=cv, \
+                        onvalue=1, offvalue=0, height=2, \
+                        width=20)
+        data_cboxes.append(c)
+        data_cv.append(cv)
+        c.pack()
 
 
-		category_label = Label(category_window, text="Enter Category Name : ")
-		category_label.grid(row = 0, column = 0, padx = 10, pady = 10)
+def selected():
+    selected_list = []
+    name_len = len(name)
+    for i in range(name_len):
+        if data_cv[i].get() == 1:
+            selected_list.append(i)
 
-		category_entry = Entry(category_window)
-		category_entry.grid(row = 0, column = 1, padx = 10, pady = 10)
+    return selected_list
 
-		def update_train_list() :
 
-			category_entry_value = category_entry.get()
-			category_dict[category_entry_value] = selected_to_train
-			train_label = Label(frame1, text=category_entry_value)
-			train_label.pack(padx = 10, pady = 10)
-			category_window.destroy()
+def train_list():
+    selected_to_train = []
+    selected_to_train_num = selected()
 
-			for i in selected_to_train_num :
-				data_cboxes[i].deselect()
-				data_cboxes[i].config(state=DISABLED)
+    for i in selected_to_train_num:
+        selected_to_train.append(name[i])
 
-			print("\nUpdated Category List : \n\n")
-			print(category_dict)
+    s_len = len(selected_to_train)
 
-		category_ok_button = Button(category_window, text = 'OK', command = update_train_list) 
-		category_ok_button.grid(row = 1, column = 1, padx = 10, pady = 10)
+    if not (s_len == 0):
 
-	else :
-		tkinter.messagebox.showerror("Error", "Please select the files to train or browse for files.")
-		
-def test_list() :
-	
-	selected_to_test = []
-	selected_to_test_num = selected()
+        category_window = Toplevel(master=window)
+        category_window.title("Create Category")
+        category_window.resizable(width=False, height=False)
 
-	for i in selected_to_test_num :
-		selected_to_test.append(name[i])
-		global_test_input.append(name[i])
+        category_label = Label(category_window, text="Enter Category Name : ")
+        category_label.grid(row=0, column=0, padx=10, pady=10)
 
-	s_len = len(selected_to_test)
+        category_entry = Entry(category_window)
+        category_entry.grid(row=0, column=1, padx=10, pady=10)
 
-	if not (s_len == 0) :
+        def update_train_list():
 
-		for i in range(s_len) :
-			filename = os.path.split(selected_to_test[i])[1] 
-			test_label = Label(frame3, text=filename)
-			test_label.pack(padx = 10, pady = 10)
-		
-		for i in selected_to_test_num :
-			data_cboxes[i].deselect()
-			data_cboxes[i].config(state=DISABLED)
+            category_entry_value = category_entry.get()
+            category_dict[category_entry_value] = selected_to_train
+            train_label = Label(frame1, text=category_entry_value)
+            train_label.pack(padx=10, pady=10)
+            category_window.destroy()
 
-	else :
-		tkinter.messagebox.showerror("Error", "Please select the files to test or browse for files.")
+            for i in selected_to_train_num:
+                data_cboxes[i].deselect()
+                data_cboxes[i].config(state=DISABLED)
 
-def quickTest() :
-	pass
+            print("\nUpdated Category List : \n\n")
+            print(category_dict)
 
-def barGraph() :
-	pass
+        category_ok_button = Button(category_window, text='OK', command=update_train_list)
+        category_ok_button.grid(row=1, column=1, padx=10, pady=10)
 
-def spectrogram() :
-	pass
+    else:
+        tkinter.messagebox.showerror("Error", "Please select the files to train or browse for files.")
 
-def classify() :
 
-	classify_window = Toplevel()
-	classify_window.title("Classification Options")
-	classify_window.resizable(width=False, height=False)
+def test_list():
+    selected_to_test = []
+    selected_to_test_num = selected()
 
-	
-	check_var1 = IntVar()
-	check_var2 = IntVar()
+    for i in selected_to_test_num:
+        selected_to_test.append(name[i])
+        global_test_input.append(name[i])
 
-	c1 = Checkbutton(classify_window, text = "Librosa", variable = check_var1, \
-	             onvalue = 1, offvalue = 0, height=2, \
-	             width = 10)
-	c2 = Checkbutton(classify_window, text = "Sphinx", variable = check_var2, \
-	             onvalue = 1, offvalue = 0, height=2, \
-	             width = 10)
-	c1.grid(row=0, column=0, padx=20, pady=10)
-	c2.grid(row=1, column=0, padx=20, pady=10)
+    s_len = len(selected_to_test)
 
-	def result() :
+    if not (s_len == 0):
 
-		classify_window.destroy()
-		result_window = Toplevel()
-		result_window.title("Results")
-		result_window.resizable(width=False, height=False)
+        for i in range(s_len):
+            filename = os.path.split(selected_to_test[i])[1]
+            test_label = Label(frame3, text=filename)
+            test_label.pack(padx=10, pady=10)
 
-		label1 = Label(result_window, text="Statistical Metrics")
-		label1.grid(row=0, column=1, pady=10)
+        for i in selected_to_test_num:
+            data_cboxes[i].deselect()
+            data_cboxes[i].config(state=DISABLED)
 
-		frame1 = Frame(result_window, width=180, height=340, bg='white', bd=3, relief=RIDGE)
-		frame1.grid(row=1, column=1, padx=35, pady=20)
+    else:
+        tkinter.messagebox.showerror("Error", "Please select the files to test or browse for files.")
 
-		s_len = len(global_test_input)
 
-		for i in range(s_len) :
+def quickTest():
+    pass
 
-			filename = os.path.split(global_test_input[i])[1] 
-			test_label = Label(frame1, text=filename)
-			test_label.pack(padx = 10, pady = 10)
-		
-		graph_button = Button(result_window, text='Bar Graph for selected file', bd=3, padx=35, command=barGraph)
-		graph_button.grid(row=1, column=2)
 
-		specto_button = Button(result_window, text='Spectogram for selected file(s)', bd=3, padx=35, command=spectrogram)
-		specto_button.grid(row=2, column=2)
+def barGraph():
+    pass
 
-		test_button = Button(result_window, text='Quick Test', bd=3, pady=15, command=quickTest)
-		test_button.grid(row=2, column=1)
-					
-	ok_button = Button(classify_window, text = "OK", command=result)
-	ok_button.grid(row=2, column=0, padx=20, pady=20)
 
-	quit_button = Button(classify_window, text = "Cancel", command=lambda:classify_window.destroy())
-	quit_button.grid(row=2, column=1, padx=20, pady=20)
+def spectrogram():
+    pass
+
+
+def classify():
+    classify_window = Toplevel()
+    classify_window.title("Classification Options")
+    classify_window.resizable(width=False, height=False)
+
+    check_var1 = IntVar()
+    check_var2 = IntVar()
+
+    c1 = Checkbutton(classify_window, text="Librosa", variable=check_var1, \
+                     onvalue=1, offvalue=0, height=2, \
+                     width=10)
+    c2 = Checkbutton(classify_window, text="Sphinx", variable=check_var2, \
+                     onvalue=1, offvalue=0, height=2, \
+                     width=10)
+    c1.grid(row=0, column=0, padx=20, pady=10)
+    c2.grid(row=1, column=0, padx=20, pady=10)
+
+    def result():
+        classify_window.destroy()
+        result_window = Toplevel()
+        result_window.title("Results")
+        result_window.resizable(width=False, height=False)
+
+        label1 = Label(result_window, text="Statistical Metrics")
+        label1.grid(row=0, column=1, pady=10)
+
+        frame1 = Frame(result_window, width=180, height=340, bg='white', bd=3, relief=RIDGE)
+        frame1.grid(row=1, column=1, padx=35, pady=20)
+
+        s_len = len(global_test_input)
+
+        for i in range(s_len):
+            filename = os.path.split(global_test_input[i])[1]
+            test_label = Label(frame1, text=filename)
+            test_label.pack(padx=10, pady=10)
+
+        graph_button = Button(result_window, text='Bar Graph for selected file', bd=3, padx=35, command=barGraph)
+        graph_button.grid(row=1, column=2)
+
+        specto_button = Button(result_window, text='Spectogram for selected file(s)', bd=3, padx=35,
+                               command=spectrogram)
+        specto_button.grid(row=2, column=2)
+
+        test_button = Button(result_window, text='Quick Test', bd=3, pady=15, command=quickTest)
+        test_button.grid(row=2, column=1)
+
+    ok_button = Button(classify_window, text="OK", command=result)
+    ok_button.grid(row=2, column=0, padx=20, pady=20)
+
+    quit_button = Button(classify_window, text="Cancel", command=lambda: classify_window.destroy())
+    quit_button.grid(row=2, column=1, padx=20, pady=20)
 
 
 train_button = Button(window, text='<', bd=3, padx=20, pady=20, command=train_list)
@@ -222,10 +221,3 @@ c_button.grid(row=2, column=5)
 window.resizable(width=False, height=False)
 
 window.mainloop()
-
-
-
-
-
-
-
