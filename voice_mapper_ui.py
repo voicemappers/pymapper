@@ -22,6 +22,7 @@ data_cboxes = []
 
 test_label = []
 global_test_input = []
+global_test_value = ""
 
 window = Tk()
 window.title("Voice Mapper")
@@ -135,7 +136,7 @@ def train_list():
 
             for i in selected_to_train_num:
                 data_cboxes[i].deselect()
-                data_cboxes[i].config(state=DISABLED)
+                data_cboxes[i].destroy()
 
             print("\nUpdated Category List : \n\n")
             print(category_dict_rosa)
@@ -166,7 +167,7 @@ def test_list():
 
         for i in selected_to_test_num:
             data_cboxes[i].deselect()
-            data_cboxes[i].config(state=DISABLED)
+            data_cboxes[i].destroy()
 
     else:
         tkinter.messagebox.showerror("Error", "Please select the files to test or browse for files.")
@@ -200,28 +201,11 @@ def bar_graph():
 
 
 def spectrogram():
-    pass
+    print(global_test_value)
 
 
 def classify():
-    classify_window = Toplevel()
-    classify_window.title("Classification Options")
-    classify_window.resizable(width=False, height=False)
 
-    check_var1 = IntVar()
-    check_var2 = IntVar()
-
-    c1 = Checkbutton(classify_window, text="Librosa", variable=check_var1,
-                     onvalue=1, offvalue=0, height=2,
-                     width=10)
-    c2 = Checkbutton(classify_window, text="Sphinx", variable=check_var2,
-                     onvalue=1, offvalue=0, height=2,
-                     width=10)
-    c1.grid(row=0, column=0, padx=20, pady=10)
-    c2.grid(row=1, column=0, padx=20, pady=10)
-
-    def result():
-        classify_window.destroy()
         result_window = Toplevel()
         result_window.title("Results")
         result_window.resizable(width=False, height=False)
@@ -229,15 +213,24 @@ def classify():
         label1 = Label(result_window, text="Statistical Metrics")
         label1.grid(row=0, column=1, pady=10)
 
+        def sel() :
+        	global global_test_value
+        	global_test_value = global_test_input[var.get()]
+
         frame1 = Frame(result_window, width=180, height=340, bg='white', bd=3, relief=RIDGE)
         frame1.grid(row=1, column=1, padx=35, pady=20)
 
         s_len = len(global_test_input)
+        var = IntVar()
+        var.set(global_test_input[0])
 
         for i in range(s_len):
             filename = os.path.split(global_test_input[i])[1]
-            test_label = Label(frame1, text=filename)
-            test_label.pack(padx=10, pady=10)
+            test_radio = Radiobutton(frame1, text=filename, variable=var, value=i,
+                  command=sel)
+            test_radio.pack(anchor = W)
+
+            
 
         graph_button = Button(result_window, text='Bar Graph for selected file', bd=3, padx=35, command=bar_graph)
         graph_button.grid(row=1, column=2)
@@ -248,12 +241,6 @@ def classify():
 
         test_button = Button(result_window, text='Quick Test', bd=3, pady=15, command=quick_test)
         test_button.grid(row=2, column=1)
-
-    ok_button = Button(classify_window, text="OK", command=result)
-    ok_button.grid(row=2, column=0, padx=20, pady=20)
-
-    quit_button = Button(classify_window, text="Cancel", command=lambda: classify_window.destroy())
-    quit_button.grid(row=2, column=1, padx=20, pady=20)
 
 
 category_dict_rosa = read_trained_pickle()
@@ -266,10 +253,10 @@ test_button = Button(window, text='>', bd=3, padx=20, pady=20, command=test_list
 test_button.grid(row=1, column=4)
 
 browse_button = Button(window, text='Browse', bd=3, padx=20, pady=20, command=fileDialog)
-browse_button.grid(row=2, column=1)
+browse_button.grid(row=2, column=3)
 
 c_button = Button(window, text='Classify', bd=3, pady=15, command=classify)
-c_button.grid(row=2, column=2)
+c_button.grid(row=2, column=5)
 
 window.resizable(width=False, height=False)
 
