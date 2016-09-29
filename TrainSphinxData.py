@@ -80,8 +80,9 @@ def train(mfcc_file_names):
 def min_max_normalize(numbers):
     minimum = min(numbers)
     maximum = max(numbers)
-    denominator = maximum - minimum + 1
-    return list(map(lambda x: (x - minimum + 1) / denominator, numbers))
+    if maximum == 0:
+        maximum == 1
+    return list(map(lambda x: (x - minimum) / (maximum - minimum) + 0.1, numbers))
 
 
 def test(file_path, librosa_scores, labels):
@@ -98,6 +99,8 @@ def test(file_path, librosa_scores, labels):
     with open('trained.txt') as trained_files:
         for trained_filename in filter(lambda f: len(f) > 0, trained_files.readlines()):
             dtw_score_list.append(get_dtw(file_path.strip(), eval(trained_filename).strip()))
+    print(min_max_normalize(dtw_score_list))
+    print(min_max_normalize(dtw_score_list))
     plot(min_max_normalize(dtw_score_list), librosa_scores, labels)
 
 

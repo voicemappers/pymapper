@@ -178,28 +178,30 @@ def test_list():
 def quick_test():
     pass
 
+
 def min_max_normalize(numbers):
-    minimum=min(numbers)
-    maximum=max(numbers)
-    denominator=maximum-minimum+1
-    return list(map(lambda x: (x-minimum+1)/denominator, numbers))
+    minimum = min(numbers)
+    maximum = max(numbers)
+    if maximum == 0:
+        maximum == 1
+    return list(map(lambda x: (x - minimum) / (maximum - minimum) + 0.1, numbers))
+
 
 def bar_graph():
     dists_rosa = {label: dtw_util.get_distance(global_test_input[radio_var.get()], centroid)
                   for label, centroid in category_dict_rosa.items()}
-    labels_bar_graph=[]
-    librosa_scores_list=[]
+    labels_bar_graph = []
+    librosa_scores_list = []
     for k, v in dists_rosa.items():
         labels_bar_graph.append(k)
         librosa_scores_list.append(v)
-    
-    librosa_scores_list=min_max_normalize(librosa_scores_list)
-    
+
+    librosa_scores_list = min_max_normalize(librosa_scores_list)
+
     TrainSphinxData.test(global_test_input[radio_var.get()], librosa_scores_list, labels_bar_graph)
     # GAUTHAM: Read your files here as {label:filename}
     # dists_sphinx = {label: gautrain.get_dist(global_test_input[0], centroid)
     #                 for label, centroid in gautrain.read_label_file_dict().items()}
-
 
 
 def spectrogram():
@@ -207,43 +209,40 @@ def spectrogram():
 
 
 def classify():
+    result_window = Toplevel()
+    result_window.title("Results")
+    result_window.resizable(width=False, height=False)
 
-        result_window = Toplevel()
-        result_window.title("Results")
-        result_window.resizable(width=False, height=False)
+    label1 = Label(result_window, text="Statistical Metrics")
+    label1.grid(row=0, column=1, pady=10)
 
-        label1 = Label(result_window, text="Statistical Metrics")
-        label1.grid(row=0, column=1, pady=10)
+    def sel():
+        global global_test_value
+        global_test_value = global_test_input[radio_var.get()]
 
-        def sel() :
-        	global global_test_value
-        	global_test_value = global_test_input[radio_var.get()]
+    frame1 = Frame(result_window, width=180, height=340, bg='white', bd=3, relief=RIDGE)
+    frame1.grid(row=1, column=1, padx=35, pady=20)
 
-        frame1 = Frame(result_window, width=180, height=340, bg='white', bd=3, relief=RIDGE)
-        frame1.grid(row=1, column=1, padx=35, pady=20)
+    s_len = len(global_test_input)
+    global radio_var
+    radio_var = IntVar()
+    radio_var.set(global_test_input[0])
 
-        s_len = len(global_test_input)
-        global radio_var
-        radio_var = IntVar()
-        radio_var.set(global_test_input[0])
+    for i in range(s_len):
+        filename = os.path.split(global_test_input[i])[1]
+        test_radio = Radiobutton(frame1, text=filename, variable=radio_var, value=i,
+                                 command=sel)
+        test_radio.pack(anchor=W)
 
-        for i in range(s_len):
-            filename = os.path.split(global_test_input[i])[1]
-            test_radio = Radiobutton(frame1, text=filename, variable=radio_var, value=i,
-                  command=sel)
-            test_radio.pack(anchor = W)
+    graph_button = Button(result_window, text='Bar Graph for selected file', bd=3, padx=35, command=bar_graph)
+    graph_button.grid(row=1, column=2)
 
-            
+    specto_button = Button(result_window, text='Spectogram for selected file(s)', bd=3, padx=35,
+                           command=spectrogram)
+    specto_button.grid(row=2, column=2)
 
-        graph_button = Button(result_window, text='Bar Graph for selected file', bd=3, padx=35, command=bar_graph)
-        graph_button.grid(row=1, column=2)
-
-        specto_button = Button(result_window, text='Spectogram for selected file(s)', bd=3, padx=35,
-                               command=spectrogram)
-        specto_button.grid(row=2, column=2)
-
-        test_button = Button(result_window, text='Quick Test', bd=3, pady=15, command=quick_test)
-        test_button.grid(row=2, column=1)
+    test_button = Button(result_window, text='Quick Test', bd=3, pady=15, command=quick_test)
+    test_button.grid(row=2, column=1)
 
 
 category_dict_rosa = read_trained_pickle()
