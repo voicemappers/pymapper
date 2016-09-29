@@ -6,6 +6,7 @@ from tkinter import *
 import tkinter.messagebox
 from tkinter.filedialog import askopenfilename
 
+import TrainSphinxData
 import train
 import dtw_util
 
@@ -126,6 +127,7 @@ def train_list():
             # train and keep a single file representing the centroid
             category_dict_rosa[category_entry_value] = train.train(selected_to_train)[0]
             # GAUTHAM: gautrain.train(selected_to_train)
+            TrainSphinxData.main_train(selected_to_train)
             write_trained_pickle(category_dict_rosa)
             train_label = Label(frame1, text=category_entry_value)
             train_label.pack(padx=10, pady=10)
@@ -173,10 +175,24 @@ def test_list():
 def quick_test():
     pass
 
+def min_max_normalize(numbers):
+    minimum=min(numbers)
+    maximum=max(numbers)
+    denominator=maximum-minimum+1
+    return list(map(lambda x: (x-minimum+1)/denominator, numbers))
 
 def bar_graph():
     dists_rosa = {label: dtw_util.get_distance(global_test_input[0], centroid)
                   for label, centroid in category_dict_rosa.items()}
+    labels_bar_graph=[]
+    librosa_scores_list=[]
+    for k, v in dists_rosa.items():
+        labels_bar_graph.append(k)
+        librosa_scores_list.append(v)
+    
+    librosa_scores_list=min_max_normalize(librosa_scores_list)
+    
+    TrainSphinxData.test(global_test_input[0], librosa_scores_list, labels_bar_graph)
     # GAUTHAM: Read your files here as {label:filename}
     # dists_sphinx = {label: gautrain.get_dist(global_test_input[0], centroid)
     #                 for label, centroid in gautrain.read_label_file_dict().items()}
@@ -250,10 +266,10 @@ test_button = Button(window, text='>', bd=3, padx=20, pady=20, command=test_list
 test_button.grid(row=1, column=4)
 
 browse_button = Button(window, text='Browse', bd=3, padx=20, pady=20, command=fileDialog)
-browse_button.grid(row=2, column=3)
+browse_button.grid(row=2, column=1)
 
 c_button = Button(window, text='Classify', bd=3, pady=15, command=classify)
-c_button.grid(row=2, column=5)
+c_button.grid(row=2, column=2)
 
 window.resizable(width=False, height=False)
 
