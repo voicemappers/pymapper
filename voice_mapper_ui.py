@@ -24,6 +24,8 @@ test_label = []
 global_test_input = []
 global_test_value = ""
 
+radio_var = 0
+
 window = Tk()
 window.title("Voice Mapper")
 
@@ -183,7 +185,7 @@ def min_max_normalize(numbers):
     return list(map(lambda x: (x-minimum+1)/denominator, numbers))
 
 def bar_graph():
-    dists_rosa = {label: dtw_util.get_distance(global_test_input[0], centroid)
+    dists_rosa = {label: dtw_util.get_distance(global_test_input[radio_var.get()], centroid)
                   for label, centroid in category_dict_rosa.items()}
     labels_bar_graph=[]
     librosa_scores_list=[]
@@ -193,7 +195,7 @@ def bar_graph():
     
     librosa_scores_list=min_max_normalize(librosa_scores_list)
     
-    TrainSphinxData.test(global_test_input[0], librosa_scores_list, labels_bar_graph)
+    TrainSphinxData.test(global_test_input[radio_var.get()], librosa_scores_list, labels_bar_graph)
     # GAUTHAM: Read your files here as {label:filename}
     # dists_sphinx = {label: gautrain.get_dist(global_test_input[0], centroid)
     #                 for label, centroid in gautrain.read_label_file_dict().items()}
@@ -215,18 +217,19 @@ def classify():
 
         def sel() :
         	global global_test_value
-        	global_test_value = global_test_input[var.get()]
+        	global_test_value = global_test_input[radio_var.get()]
 
         frame1 = Frame(result_window, width=180, height=340, bg='white', bd=3, relief=RIDGE)
         frame1.grid(row=1, column=1, padx=35, pady=20)
 
         s_len = len(global_test_input)
-        var = IntVar()
-        var.set(global_test_input[0])
+        global radio_var
+        radio_var = IntVar()
+        radio_var.set(global_test_input[0])
 
         for i in range(s_len):
             filename = os.path.split(global_test_input[i])[1]
-            test_radio = Radiobutton(frame1, text=filename, variable=var, value=i,
+            test_radio = Radiobutton(frame1, text=filename, variable=radio_var, value=i,
                   command=sel)
             test_radio.pack(anchor = W)
 
