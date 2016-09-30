@@ -36,7 +36,7 @@ def get_max_distance(index, dist_map):
 
 def train(files):
     if len(files) == 1:
-        return files[0]
+        return files[0], 0, [[0]]
     elif len(files) == 0:
         raise Exception("No files given to train!")
     dist_map = [[0] * len(files) for _ in range(len(files))]
