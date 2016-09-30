@@ -81,7 +81,7 @@ def min_max_normalize(numbers):
     minimum = min(numbers)
     maximum = max(numbers)
     if maximum == 0:
-        maximum == 1
+        maximum = 1
     return list(map(lambda x: (x - minimum) / (maximum - minimum) + 0.1, numbers))
 
 
