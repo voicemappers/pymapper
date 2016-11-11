@@ -1,3 +1,2 @@
-b'C:\\Users\\gauth_000\\Documents\\Projects\\VoiceMapper\\Python\\VoiceMapper\\pymapper\\temp\\pani_1.m4a.txt'
-b'C:\\Users\\gauth_000\\Documents\\Projects\\VoiceMapper\\Python\\VoiceMapper\\pymapper\\temp\\aranya_4.m4a.txt'
-b'C:\\Users\\gauth_000\\Documents\\Projects\\VoiceMapper\\Python\\VoiceMapper\\pymapper\\temp\\avunu_1.m4a.txt'
+b'C:\\Users\\gauth_000\\Documents\\Projects\\VoiceMapper\\Python\\pymapper\\temp\\notepad4.wav.txt'
+b'C:\\Users\\gauth_000\\Documents\\Projects\\VoiceMapper\\Python\\pymapper\\temp\\chrome4.wav.txt'

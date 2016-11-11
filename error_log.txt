@@ -1,4 +1,4 @@
-Sep 29, 2016 9:33:20 AM edu.cmu.sphinx.tools.feature.FeatureFileDumper getAllFeatures
+Nov 11, 2016 8:39:29 PM edu.cmu.sphinx.tools.feature.FeatureFileDumper getAllFeatures
 INFO: Feature length: 13
-Sep 29, 2016 9:33:20 AM edu.cmu.sphinx.tools.feature.FeatureFileDumper processFile
-INFO: Frames: 94
+Nov 11, 2016 8:39:29 PM edu.cmu.sphinx.tools.feature.FeatureFileDumper processFile
+INFO: Frames: 339
